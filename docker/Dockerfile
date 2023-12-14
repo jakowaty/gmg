@@ -28,6 +28,7 @@ RUN a2enmod rewrite
 
 RUN mkdir -p ${WWW_ROOT}/html/var/cache
 RUN mkdir -p ${WWW_ROOT}/html/var/log
+RUN mkdir -p ${WWW_ROOT}/html/public/photos
 RUN chmod -R 777 ${WWW_ROOT}/html/var/cache
 RUN chmod -R 777 ${WWW_ROOT}/html/var/log
 

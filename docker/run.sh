@@ -1,4 +1,4 @@
 #!/bin/bash
-php composer install && chmod -R 777 /var/www/html/var && mkdir /var/www/html/public/photos && chmod -R 777 /var/www/html/public/photos
+composer install
 apache2-foreground
 

@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+
+    <div class="row">
+    <div class="col-12">
+        <div class="card card-primary">
+            <div class="card-body" >
+                <div class="col-sm-12 col-md-6 text-primary" data-controller="filter">
+                    <button class="btn btn-primary" data-action="click->filter#filter">
+                        <i class="fa fa-filter"></i> Filtry
+                    </button>
+                    <a class="btn btn-primary" href="{{ path('district_index') }}">
+                        Wyczyść parametry wyświetlania
+                    </a>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 table-responsive" data-controller="group">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+
+                                <th>Nazwa</th>
+                                <th>Miasto</th>
+                                <th {{ pagination.isSorted('citizenCount') ? 'class="sorted"' :'' }}> {{ knp_pagination_sortable(pagination, 'Liczba ludności', 'citizenCount') }}</th>
+                                <th {{ pagination.isSorted('areaInSquareMeters') ? 'class="sorted"' :'' }}> {{ knp_pagination_sortable(pagination, 'Powierzchnia', 'areaInSquareMeters') }}</th>
+                                <th> Zdjęcie</th>
+                                <th>Akcje</th>
+                            </tr>
+                            </thead>
+                            <tbody data-controller="upload">
+                            {% for district in pagination %}
+                                <tr>
+                                    <td>{{ district.getName() }}</td>
+                                    <td>
+                                        {% if district.getCity().value == 'k' %}
+                                            Kraków
+                                        {% else %}
+                                            Gdańsk
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ district.getCitizenCount() }}</td>
+                                    <td>{{ district.getAreaInSquareMeters() }}</td>
+                                    <td>
+                                        <div>
+                                            {% if district.getFile() is not empty %}
+                                                <img width="100" style="width: 300px" src="{{ district.getFile() }}" class="" id="img_{{ district.id }}">
+                                            {% else %}
+                                                <img src="#" style="width: 300px" class="display_none" id="img_{{ district.id }}">
+                                            {% endif %}
+                                        </div>
+                                        <form enctype="multipart/form-data" data-id="{{ district.id }}">
+                                            <input name="file_{{ district.id }}" id="file_{{ district.id }}" type="file" />
+                                            <input type="button" data-action="click->upload#upload" class="upload" value="Upload" />
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <span class="dropdown-toggle" type="button" id="dropdownAction" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Akcje</span>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownAction">
+                                                <a class="dropdown-item" href=""> <i class="fa fa-pencil"></i>Edytuj</a>
+                                                <a class="dropdown-item" href=""> <i class="fa fa-trash"></i>Usuń</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}

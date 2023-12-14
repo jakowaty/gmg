@@ -1,0 +1,61 @@
+{% set labels = {
+    'createdFrom':'Data od',
+    'createdTo':'Data do',
+    'updateFrom':'Data od',
+    'updateTo':'Data do',
+    'status':'Status'
+} %}
+
+{% set statuses = {
+    '1':'Aktywna',
+    '0':'Usunięta',
+} %}
+<div class="row dataTables_wrapper mb-1" data-controller="group">
+    <div class="col-sm-12 col-md-6 text-primary m-auto">
+        <span class="dataTables_filter" data-action="click->group#filter">
+            <i class="fa fa-filter"></i> Filtry
+        </span>
+    </div>
+    <div class="col-sm-12 col-md-6 text-right">
+        <form data-action="group#search" method="get" enctype="application/x-www-form-urlencoded">
+            <div class="dataTables_query">
+                <label>Szukaj:</label>
+                    <input
+                        name="query"
+                        value="{{ app.request.get('query') }}"
+                        type="search"
+                        class="form-control form-control-sm"
+                        placeholder="Wpisz fragment nazwy"
+                        style="min-width: 40%"
+                    >
+            </div>
+        </form>
+    </div>
+    <div class="col-sm-12">
+        {% if filters is defined %}
+            {% for key,values in filters %}
+                {% if values is iterable %}
+                    {% for k2,v2 in values %}
+                        {% if key == 'status' %}
+                            <button type="button" class="btn btn-secondary m-1">
+                                {{ labels[key] }}: {{ statuses[v2] }}<span data-value="{{ v2 }}" data-name="filters[{{ key }}]" data-action="group#unsetFilter" class="badge">X</span>
+                            </button>
+                        {% else %}
+                            <button type="button" class="btn btn-secondary m-1">
+                                {{ labels[key] }}: {{ v2 }}<span data-value="{{ v2 }}" data-name="filters[{{ key }}]" data-action="group#unsetFilter" class="badge">X</span>
+                            </button>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    {% if values is not empty %}
+                        <button type="button" class="btn btn-secondary m-1">
+                            {{ labels[key] }}: {{ filtersData[key]|default is not empty ? filtersData[key] : values }}
+                            <span data-value="{{ values }}" data-name="filters[{{ key }}]"
+                                  data-action="group#unsetFilter" class="badge">X</span>
+                        </button>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>

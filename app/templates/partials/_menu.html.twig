@@ -1,0 +1,28 @@
+{% set request_url =  app.request.requestUri %}
+{% set current_path = app.request.get('_route') %}
+{% set request_url =  app.request.requestUri %}
+{% set childActive = 0 %}
+{% set menuItems = [
+    {'title':'Pobieranie','path':'homepage','icon':'th-list','params': [], 'role': 'PUBLIC_ACCESS'},
+] %}
+
+<div class="sidebar">
+    <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            {% for item in menuItems %}
+                {% if is_granted(item.role) %}
+
+                    {% set active = app.request.attributes.get('_route') == item.path ? true : false %}
+                    {% set url =  path(item.path,item.params is defined ? item.params: {}) %}
+
+                    <li class="nav-item ">
+                        <a href="{{ url }}" class="nav-link {{ active ? 'active' : '' }}">
+                            <i class="nav-icon fa {{ 'fa-'~item.icon }}"></i>
+                            <p>{{ item.title }}</p>
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
+</div>

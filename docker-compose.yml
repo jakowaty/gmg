@@ -1,0 +1,34 @@
+version: "3.5"
+
+services:
+    webserver:
+        container_name: gmg_apache
+        build:
+            context: .
+            dockerfile: docker/Dockerfile
+        ports:
+            - "127.0.0.1:8080:80"
+        volumes:
+            - ./app:/var/www/html
+        working_dir: /var/www/html
+
+    node:
+        image: node:20.9-slim
+        container_name: gmg_node
+        ports:
+            - "127.0.0.1:8090:8080"
+            - "127.0.0.1:3000:3000"
+        tty: true
+        volumes:
+            - ./app:/var/www/html
+        working_dir: /var/www/html
+        command: 'bash -c "npm install && npm run watch"'
+
+    mongodb:
+        image: mongo:4-focal
+        container_name: gmg_mongodb
+        ports:
+            - "127.0.0.1:27017:27017"
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=root
+            - MONGO_INITDB_ROOT_PASSWORD=passwd

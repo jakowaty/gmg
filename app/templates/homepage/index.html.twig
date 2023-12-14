@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-primary">
+                <div class="card-body">
+                    <a href="{{ path('fetch_gdansk') }}" class="btn btn-primary"><i class="fa fa-plus"></i> Pobierz/zaktualizuj informacje dla Gdańska</a>
+                    <a href="{{ path('fetch_krakow') }}" class="btn btn-primary"><i class="fa fa-plus"></i> Pobierz/zaktualizuj informacje dla Krakowa</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

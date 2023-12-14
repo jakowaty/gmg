@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+    {% block headerPage %}
+        <div class="row">
+            <div class="col-sm-6">
+                <h1 class="m-0 text-uppercase">Grupy</h1>
+            </div>
+            <div class="col-sm-6">
+                <a href="{{ path('group_add') }}" class="btn btn-primary float-right"><i class="fa fa-plus"></i> Dodaj nową grupę</a>
+            </div>
+        </div>
+    {% endblock %}
+{% block body %}
+
+    <div class="row">
+    <div class="col-12">
+        <div class="card card-primary">
+            <div class="card-body">
+                {{ include('group/partial/_filters.html.twig') }}
+                <div class="row">
+                    <div class="col-sm-12 table-responsive" data-controller="group">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th {{ pagination.isSorted('createdAt') ? 'class="sorted"' :'' }}> {{ knp_pagination_sortable(pagination, 'Utworzona', 'createdAt') }}</th>
+                                    <th>Ostatnia zmiana</th>
+                                    <th>Nazwa grupy</th>
+                                    <th>Akcje</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for group in pagination %}
+                                <tr>
+                                    <td>{{ group.getCreatedAt()|date('Y-m-d H:i') }}</td>
+                                    <td>{{ group.getLastUpdatedAt()|date('Y-m-d H:i') }}</td>
+                                    <td>{{ group.getName() }}</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <span class="dropdown-toggle" type="button" id="dropdownAction" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Akcje</span>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownAction">
+                                                <a class="dropdown-item" href="{{ path('group_view', {'id': group.id} ) }}"> <i class="fa fa-eye"></i>Zobacz szczegóły</a>
+                                                <a class="dropdown-item" href="{{ path('group_edit', {'id': group.id} ) }}"> <i class="fa fa-pencil"></i>Edytuj</a>
+                                                <a class="dropdown-item" href="{{ path('group_delete', {'id': group.id} ) }}"> <i class="fa fa-trash"></i>Usuń</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {{ knp_pagination_render(pagination) }}
+            </div>
+        </div>
+    </div>
+    </div>{% endblock %}

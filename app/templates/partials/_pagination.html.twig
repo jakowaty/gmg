@@ -1,0 +1,96 @@
+<div class="row mt-2">
+    <div class="col-sm-2">
+        <div class="pagination_result">Wyniki {{ firstItemNumber }} do {{ lastItemNumber }} z {{ totalCount }}</div>
+    </div>
+    <div class="col-sm-8">
+        {% set classSize = (size is not defined) ? '' : size=='large' ? ' pagination-lg' : (size=='small' ? ' pagination-sm' : '') %}
+        {% if pageCount > 1 %}
+            <div class="col-sm-12 col-md-6 m-auto ">
+                <ul class="pagination m-auto  {{ classSize }}">
+                    {% if previous is defined %}
+                        <li class="page-item">
+                            <a class="page-link" rel="prev"
+                               href="{{ path(route, query|merge({(pageParameterName): previous})) }}"><i class="fa fa-angle-left"></i></a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link"><i class="fa fa-angle-left"></i></span>
+                        </li>
+                    {% endif %}
+
+                    {% if startPage > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ path(route, query|merge({(pageParameterName): 1})) }}">1</a>
+                        </li>
+                        {% if startPage == 3 %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="{{ path(route, query|merge({(pageParameterName): 2})) }}">2</a>
+                            </li>
+                        {% elseif startPage != 2 %}
+                            <li class="page-item disabled">
+                                <span class="page-link">&hellip;</span>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+
+                    {% for page in pagesInRange %}
+                        {% if page != current %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="{{ path(route, query|merge({(pageParameterName): page})) }}">{{ page }}</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ page }}</span>
+                            </li>
+                        {% endif %}
+
+                    {% endfor %}
+
+                    {% if pageCount > endPage %}
+                        {% if pageCount > (endPage + 1) %}
+                            {% if pageCount > (endPage + 2) %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">&hellip;</span>
+                                </li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link"
+                                       href="{{ path(route, query|merge({(pageParameterName): (pageCount - 1)})) }}">{{ pageCount -1 }}</a>
+                                </li>
+                            {% endif %}
+                        {% endif %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="{{ path(route, query|merge({(pageParameterName): pageCount})) }}">{{ pageCount }}</a>
+                        </li>
+                    {% endif %}
+
+                    {% if next is defined %}
+                        <li class="page-item">
+                            <a class="page-link" rel="next"
+                               href="{{ path(route, query|merge({(pageParameterName): next})) }}"><i class="fa fa-angle-right"></i></a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link"><i class="fa fa-angle-right"></i></span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+    <div class="col-sm-2 pagination_limit">
+        <div class="form-group row pull-right">
+            <label class="col-form-label">Pokaż</label>
+            <div class="ml-2">
+                <select name="limit" class="form-control ">
+                    {% for value in limit_pages %}
+                        <option value="{{ value }}" {{ numItemsPerPage == value ? 'selected="selected"' : '' }} >{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+</div>

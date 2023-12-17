@@ -2,12 +2,9 @@
 
 namespace App\Service;
 
-use App\Interfaces\ExtractDataInterface;
-use App\Scrapper\Http\HttpScrapperClient;
+use App\DTO\DistrictDto;
 
-abstract class AbstractExtractStrategy implements ExtractDataInterface
+abstract class AbstractExtractStrategy
 {
-    public function __construct(protected HttpScrapperClient $scrapperClient)
-    {
-    }
+    abstract public function processScrappedCityHtml(string $data, int $id): DistrictDto;
 }

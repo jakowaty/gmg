@@ -16,24 +16,20 @@ class GdanskExtractStrategy extends AbstractExtractStrategy
         return isset($matches[1]) ? $matches[1] : null;
     }
 
-    public function extractDataForCity(string $sprintfUrlPattern, array $ids): array
+    public function processScrappedCityHtml(string $data, int $id): DistrictDto
     {
-        $result = [];
+        $dom = \dom_import_simplexml(new \SimpleXMLElement($data));
+        $xpath = new \DOMXPath($dom->ownerDocument);
+        $query = "//div[contains(@class, 'opis')]/div[1]";
 
-        foreach ($ids as $x) {
-            $data = $this->scrapperClient->get(\sprintf($sprintfUrlPattern, $x));
-            $dom = \dom_import_simplexml(new \SimpleXMLElement($data));
-            $xpath = new \DOMXPath($dom->ownerDocument);
-            $query = "//div[contains(@class, 'opis')]/div[1]";
+        $districtName = $xpath->query($query)->item(0)->textContent;
 
-            $districtName = $xpath->query($query)->item(0)->textContent;
-            $districtCitizenCount = (int)$this->extractNumericValue($data, 'Liczba ludności');
-            $districtArea = $this->extractNumericValue($data, 'Powierzchnia');
-            $districtArea =  is_string($districtArea) ? (float) str_replace(',', '.', $districtArea) : 0;
+        $districtCitizenCount = $this->extractNumericValue($data, 'Liczba ludności');
+        $districtCitizenCount = is_numeric($districtCitizenCount) ? (int)$districtCitizenCount : $districtCitizenCount;
 
-            $result[$districtName] = new DistrictDto(City::GDANSK, $districtName, (string)$x, $districtCitizenCount, $districtArea);
-        }
+        $districtArea = $this->extractNumericValue($data, 'Powierzchnia');
+        $districtArea = is_string($districtArea) ? (float)str_replace(',', '.', $districtArea) : $districtArea;
 
-        return $result;
+        return new DistrictDto(City::GDANSK, $districtName, (string)$id, $districtCitizenCount, $districtArea);
     }
 }

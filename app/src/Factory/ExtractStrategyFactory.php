@@ -5,21 +5,18 @@ namespace App\Factory;
 use App\Enum\City;
 use App\Interfaces\ExtractDataInterface;
 use App\Scrapper\Http\HttpScrapperClientFactory;
+use App\Service\AbstractExtractStrategy;
 use App\Service\GdanskExtractStrategy;
 use App\Service\HaAsStringToSquareKmConverter;
 use App\Service\KrakowExtractStrategy;
 
 class ExtractStrategyFactory
 {
-    public function __construct(private readonly HttpScrapperClientFactory $clientFactory)
-    {
-    }
-
-    public function create(City $city): ExtractDataInterface
+    public function create(City $city): AbstractExtractStrategy
     {
         return match ($city) {
-            City::GDANSK => new GdanskExtractStrategy($this->clientFactory->createHttpScrapperClient()),
-            City::KRAKOW => new KrakowExtractStrategy($this->clientFactory->createHttpScrapperClient(), new HaAsStringToSquareKmConverter())
+            City::GDANSK => new GdanskExtractStrategy(),
+            City::KRAKOW => new KrakowExtractStrategy(new HaAsStringToSquareKmConverter())
         };
     }
 }

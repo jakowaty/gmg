@@ -4,14 +4,10 @@ namespace App\Service;
 
 use App\DTO\DistrictDto;
 use App\Enum\City;
-use App\Scrapper\Http\HttpScrapperClient;
 
 class KrakowExtractStrategy extends AbstractExtractStrategy
 {
-    public function __construct(HttpScrapperClient $scrapperClient, private HaAsStringToSquareKmConverter $converter)
-    {
-        parent::__construct($scrapperClient);
-    }
+    public function __construct(private readonly HaAsStringToSquareKmConverter $converter){}
 
     private function extractDistrictName(string $html): ?string
     {
@@ -40,20 +36,12 @@ class KrakowExtractStrategy extends AbstractExtractStrategy
         return isset($matches[1]) ? $matches[1] : null;
     }
 
-    public function extractDataForCity(string $sprintfUrlPattern, array $ids): array
+    public function processScrappedCityHtml(string $data, int $id): DistrictDto
     {
-        $result = [];
+        $districtName = $this->extractDistrictName($data);
+        $districtArea = $this->converter->convert($this->extractDistrictArea($data));
+        $districtCitizenCount = (int)$this->extractCitizenCount($data);
 
-        foreach ($ids as $x) {
-            $data = $this->scrapperClient->get(\sprintf($sprintfUrlPattern, $x));
-            $districtName = $this->extractDistrictName($data);
-            $districtArea = $this->converter->convert($this->extractDistrictArea($data));
-            $districtCitizenCount = (int)$this->extractCitizenCount($data);
-
-            $result[$districtName] = new DistrictDto(City::KRAKOW, $districtName, (string)$x, $districtCitizenCount, $districtArea);
-        }
-
-        return $result;
+        return new DistrictDto(City::KRAKOW, $districtName, (string)$id, $districtCitizenCount, $districtArea);
     }
-
 }
